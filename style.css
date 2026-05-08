@@ -1,0 +1,327 @@
+/* --- GOOGLE FONTS --- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&family=Outfit:wght@300;400;700&family=Permanent+Marker&display=swap');
+
+/* --- THEME VARIABLES --- */
+:root {
+    /* Soul Reaper Mode (Default) */
+    --bg-color: #0a0a0a;
+    --card-bg: #151515;
+    --text-color: #ffffff;
+    --accent-color: #f37021; /* Ichigo Orange */
+    --secondary-accent: #2a2a2a;
+    --nav-bg: rgba(10, 10, 10, 0.98);
+    --vignette: rgba(0,0,0,0);
+    --kanji-opacity: 0.07;
+    
+    /* Fonts */
+    --font-main: 'Outfit', sans-serif;
+    --font-logo: 'Permanent Marker', cursive;
+    --font-kanji: 'Noto Sans JP', sans-serif;
+}
+
+/* Hollow Mode Override */
+body.hollow-mode {
+    --bg-color: #f5f5f5; /* Bone White */
+    --card-bg: #ffffff;
+    --text-color: #111111;
+    --accent-color: #e60026; /* Cero Red */
+    --secondary-accent: #e0e0e0;
+    --nav-bg: rgba(245, 245, 245, 0.98);
+    --vignette: inset 0 0 200px rgba(230, 0, 38, 0.15);
+    --kanji-opacity: 0.12;
+}
+
+/* --- GLOBAL STYLES --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.6s ease;
+}
+
+/* Spiritual Pressure Texture Overlay */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Hollow Mode Vignette */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    box-shadow: var(--vignette);
+    pointer-events: none;
+    transition: box-shadow 0.8s ease;
+    z-index: 999;
+}
+
+/* --- NAVIGATION --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 8%;
+    background: var(--nav-bg);
+    border-bottom: 2px solid var(--accent-color);
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    transition: all 0.5s ease;
+}
+
+.logo {
+    font-family: var(--font-logo);
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.logo span {
+    color: var(--accent-color);
+    transition: color 0.5s ease;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links li {
+    margin-left: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--accent-color);
+}
+
+/* Hollow Toggle Button */
+.hollow-btn {
+    padding: 8px 18px;
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    font-family: var(--font-logo);
+    font-size: 1rem;
+    cursor: pointer;
+    margin-left: 30px;
+    transition: all 0.3s ease;
+}
+
+.hollow-btn:hover {
+    background: var(--accent-color);
+    color: var(--bg-color);
+    transform: skewX(-10deg);
+}
+
+/* --- HERO SECTION --- */
+.hero {
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                url('https://images.unsplash.com/photo-1531746790731-6c087fecd05a?auto=format&fit=crop&q=80&w=2000');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.hero-content h1 {
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.reaper-text {
+    color: var(--accent-color);
+    text-shadow: 0 0 20px rgba(243, 112, 33, 0.4);
+    animation: reiatsuPulse 3s infinite ease-in-out;
+}
+
+/* --- SECTION STYLING --- */
+.section {
+    padding: 100px 10%;
+    text-align: center;
+    position: relative;
+}
+
+.section-title {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 60px;
+}
+
+.section-title h2 {
+    font-size: 3rem;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+}
+
+.kanji-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-kanji);
+    font-size: 8rem;
+    color: var(--accent-color);
+    opacity: var(--kanji-opacity);
+    z-index: 1;
+    white-space: nowrap;
+    transition: opacity 0.5s ease;
+}
+
+.divider {
+    height: 5px;
+    width: 80px;
+    background: var(--accent-color);
+    margin: 15px auto;
+}
+
+/* --- DIVISION GRID --- */
+.division-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.division-card {
+    background: var(--card-bg);
+    padding: 40px;
+    text-align: left;
+    border-top: 4px solid var(--accent-color);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.division-card:hover {
+    transform: translateY(-10px);
+    background: var(--secondary-accent);
+}
+
+body.hollow-mode .division-card {
+    border: 2px solid #000;
+    box-shadow: 10px 10px 0px var(--accent-color);
+}
+
+.division-card h3 {
+    font-family: var(--font-logo);
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+/* --- ROBOT SPECS (BANKAI) --- */
+.robot-card {
+    background: var(--card-bg);
+    border: 1px solid var(--accent-color);
+    padding: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    transition: 0.5s;
+}
+
+.specs-list {
+    text-align: left;
+    list-style: none;
+}
+
+.specs-list li {
+    margin: 15px 0;
+    font-size: 1.2rem;
+}
+
+.specs-list strong {
+    color: var(--accent-color);
+    margin-right: 10px;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes reiatsuPulse {
+    0%, 100% { filter: drop-shadow(0 0 5px var(--accent-color)); }
+    50% { filter: drop-shadow(0 0 25px var(--accent-color)); }
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    60% { transform: translate(-1px, 2px) rotate(-1deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.shake-active {
+    animation: shake 0.4s ease-in-out;
+}
+
+.flash-effect {
+    filter: brightness(5) contrast(2);
+}
+
+/* --- REVEAL ON SCROLL --- */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.active-reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- FOOTER --- */
+footer {
+    padding: 60px 10%;
+    background: var(--bg-color);
+    border-top: 1px solid var(--secondary-accent);
+    text-align: center;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+    .hero-content h1 { font-size: 3rem; }
+    .navbar { padding: 1rem 5%; flex-direction: column; }
+    .nav-links { margin-top: 20px; }
+    .hollow-btn { margin: 20px 0 0 0; }
+    .kanji-bg { font-size: 5rem; }
+}
