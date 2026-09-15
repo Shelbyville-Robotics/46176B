@@ -1,122 +1,101 @@
-// --- 1. HOLLOW MODE LOGIC ---
-const toggleBtn = document.getElementById('hollow-toggle');
-const body = document.body;
+(function () {
+  "use strict";
 
-if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-        body.classList.toggle('hollow-mode');
-        
-        // Update button text based on the mode
-        if (body.classList.contains('hollow-mode')) {
-            toggleBtn.textContent = 'Mask Off';
-        } else {
-            toggleBtn.textContent = 'Mask On';
-        }
+  var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- Mobile nav toggle ---------- */
+  var navToggle = document.getElementById("navToggle");
+  var nav = document.getElementById("nav");
+
+  if (navToggle && nav) {
+    navToggle.addEventListener("click", function () {
+      var isOpen = nav.classList.toggle("is-open");
+      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
     });
-}
 
-// --- 2. SCROLL REVEAL LOGIC ---
-const observerOptions = {
-    threshold: 0.1
-};
-
-// We only declare "observer" ONCE here
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = "1";
-            entry.target.style.transform = "translateY(0)";
-        }
+    nav.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        nav.classList.remove("is-open");
+        navToggle.setAttribute("aria-expanded", "false");
+      });
     });
-}, observerOptions);
+  }
 
-// Apply the observer to all elements with the "reveal" class
-document.querySelectorAll('.reveal').forEach((el) => {
-    el.style.opacity = "0";
-    el.style.transform = "translateY(30px)";
-    el.style.transition = "all 0.8s ease-out";
-    observer.observe(el);
-});
-window.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.getElementById('hollow-toggle');
-    const body = document.body;
+  /* ---------- Ticket "printer" reveal on scroll ---------- */
+  var tickets = document.querySelectorAll(".ticket");
 
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            // 1. Trigger a "Spiritual Flash"
-            body.classList.add('flash-effect');
-            
-            // 2. Toggle the mode after a tiny delay for impact
-            setTimeout(() => {
-                body.classList.toggle('hollow-mode');
-                
-                if (body.classList.contains('hollow-mode')) {
-                    toggleBtn.textContent = 'Mask Off';
-                } else {
-                    toggleBtn.textContent = 'Mask On';
-                }
-            }, 50);
-
-            // 3. Remove the flash effect
-            setTimeout(() => {
-                body.classList.remove('flash-effect');
-            }, 300);
+  if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+    tickets.forEach(function (t) { t.classList.add("is-visible"); });
+  } else {
+    var ticketObserver = new IntersectionObserver(
+      function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
         });
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -60px 0px" }
+    );
+    tickets.forEach(function (t) { ticketObserver.observe(t); });
+  }
+
+  /* ---------- Hero stat counters ---------- */
+  var counters = document.querySelectorAll("[data-count]");
+
+  function formatValue(target, format) {
+    if (format === "plus") return target + "+";
+    return String(target);
+  }
+
+  function animateCounter(el) {
+    var target = parseInt(el.getAttribute("data-count"), 10) || 0;
+    var format = el.getAttribute("data-format") || "plain";
+
+    if (format === "year" || prefersReducedMotion) {
+      el.textContent = formatValue(target, format);
+      return;
     }
 
-    // Scroll Reveal Logic (Same as before, keeps it sleek)
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = "1";
-                entry.target.style.transform = "translateY(0)";
-            }
-        });
-    });
+    var duration = 900;
+    var start = null;
 
-    document.querySelectorAll('.reveal').forEach((el) => {
-        el.style.opacity = "0";
-        el.style.transform = "translateY(30px)";
-        el.style.transition = "all 1s cubic-bezier(0.22, 1, 0.36, 1)";
-        observer.observe(el);
-    });
-});
-window.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.getElementById('hollow-toggle');
-    const body = document.body;
-
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            // Add the shake and flash
-            body.classList.add('shake-active', 'flash-effect');
-            
-            setTimeout(() => {
-                body.classList.toggle('hollow-mode');
-                toggleBtn.textContent = body.classList.contains('hollow-mode') ? 'Mask Off' : 'Mask On';
-            }, 100);
-
-            // Remove effects
-            setTimeout(() => {
-                body.classList.remove('shake-active', 'flash-effect');
-            }, 600);
-
-            // Easter Egg
-            if(body.classList.contains('hollow-mode')) {
-                console.log("%cDON'T LOSE CONTROL.", "color: red; font-size: 20px; font-weight: bold;");
-            }
-        });
+    function step(timestamp) {
+      if (start === null) start = timestamp;
+      var progress = Math.min((timestamp - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var current = Math.round(eased * target);
+      el.textContent = formatValue(current, format);
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        el.textContent = formatValue(target, format);
+      }
     }
+    window.requestAnimationFrame(step);
+  }
 
-    // Scroll Observer
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+  if (counters.length) {
+    if (!("IntersectionObserver" in window)) {
+      counters.forEach(animateCounter);
+    } else {
+      var counterObserver = new IntersectionObserver(
+        function (entries, observer) {
+          entries.forEach(function (entry) {
             if (entry.isIntersecting) {
-                entry.target.classList.add('active-reveal');
+              animateCounter(entry.target);
+              observer.unobserve(entry.target);
             }
-        });
-    }, { threshold: 0.1 });
+          });
+        },
+        { threshold: 0.5 }
+      );
+      counters.forEach(function (c) { counterObserver.observe(c); });
+    }
+  }
 
-    document.querySelectorAll('.reveal').forEach((el) => {
-        observer.observe(el);
-    });
-});
+  /* ---------- Footer year ---------- */
+  var yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+})();
